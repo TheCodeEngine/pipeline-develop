@@ -1,0 +1,14 @@
+{
+    "name": "thecodeengine/pipeline-develop",
+    "description": "Test Package",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Konstantin Stoldt",
+            "email": "konstantin.stoldt@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}
