@@ -6,7 +6,8 @@
     "type": "project",
     "require": {
         "php": ">=5.5.9",
-        "laravel/framework": "5.2.*"
+        "laravel/framework": "5.2.*",
+        "jeroen-g/laravel-packager": "^1.3"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
@@ -20,6 +21,7 @@
             "database"
         ],
         "psr-4": {
+            "TheCodeEngine\\Pipeline\\": "packages/thecodeengine/pipeline/src",
             "App\\": "app/"
         }
     },
