@@ -10,6 +10,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 use Mockery\Mock;
 use TheCodeEngine\Pipeline\Pipeline;
+use TheCodeEngine\Pipeline\Command;
 
 class PipelineFailedTest extends TestCase
 {
@@ -36,5 +37,4 @@ class PipelineFailedTest extends TestCase
         $this->assertTrue($pipeline->is_runned);
         $this->assertCount(1, $commands);
     }
-
 }

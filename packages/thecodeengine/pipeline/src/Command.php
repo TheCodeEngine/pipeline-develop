@@ -9,6 +9,8 @@ namespace TheCodeEngine\Pipeline;
  *
  * @package TheCodeEngine\Pipeline
  */
+use Exception;
+
 /**
  * Class Command
  *
@@ -32,6 +34,7 @@ abstract class Command
     public $is_runned = false;
     public $is_success = false;
     public $is_failed = false;
+    public $is_undo_run = false;
 
     /**
      * Create A Command from Class string
@@ -86,6 +89,7 @@ abstract class Command
      */
     public function undo_run()
     {
+        $this->is_undo_run = true;
         return true;
     }
 
@@ -121,5 +125,33 @@ abstract class Command
     public function nextTaskfailed()
     {
         return [null, []];
+    }
+
+    /**
+     * Exec Command
+     * @return array [returnvalue, $new_class, $input_data]
+     */
+    public function exec()
+    {
+        $new_class = null;
+        $input_data = [];
+        $rv = false;
+        try {
+            $rv = $this->run();
+            if ($rv === false) {
+                $this->failed();
+                $this->undo_run();
+                list($new_class, $input_data) = $this->nextTaskfailed();
+            } else {
+                $this->success();
+                list($new_class, $input_data) = $this->nextTaskSuccess();
+            }
+        } catch (Exception $e) {
+            $this->failed();
+            $this->undo_run();
+            list($new_class, $input_data) = $this->nextTaskfailed();
+        }
+
+        return [$rv, $new_class, $input_data];
     }
 }

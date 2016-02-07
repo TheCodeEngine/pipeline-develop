@@ -118,6 +118,11 @@ class Pipeline
     protected function failed()
     {
         $this->is_failed = true;
+        // Undo all Commands in the pipeline
+        /** @var Command $command */
+        foreach($this->commands as $command) {
+            $command->undo_run();
+        }
     }
 
     /**
@@ -133,7 +138,6 @@ class Pipeline
             if ($rv===false) {
                 $this->failed();
                 $command->failed();
-                $command->undo_run();
                 list($new_class, $input_data) = $command->nextTaskfailed();
             } else {
                 $command->success();
@@ -142,7 +146,6 @@ class Pipeline
         } catch (Exception $e) {
             $this->failed();
             $command->failed();
-            $command->undo_run();
             list($new_class, $input_data) = $command->nextTaskfailed();
         }
 
