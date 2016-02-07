@@ -49,6 +49,11 @@ class Command
     public $is_undo_run = false;
 
     /**
+     * @var Exception|null exception for the exec
+     */
+    public $exec_exception;
+
+    /**
      * Create A Command from Class string
      * @param string|object $class_name Object only for test purpose
      * @param Pipeline $pipeline
@@ -159,6 +164,7 @@ class Command
                 list($new_class, $input_data) = $this->nextTaskSuccess();
             }
         } catch (Exception $e) {
+            $this->exec_exception = $e;
             $this->failed();
             $this->undo_run();
             list($new_class, $input_data) = $this->nextTaskfailed();
@@ -168,10 +174,25 @@ class Command
     }
 
     /**
+     * Return if the command is runned
      * @return boolean
      */
     public function isRunned()
     {
         return $this->is_runned;
+    }
+
+    /**
+     * Return ig the command has runned the undo action
+     * @return boolean
+     */
+    public function isUndoRun()
+    {
+        return $this->is_undo_run;
+    }
+
+    public function getExecException()
+    {
+        return $this->exec_exception;
     }
 }

@@ -56,6 +56,7 @@ class CommandTest extends TestCase
         $this->assertEquals(true, $command->is_success);
         $this->assertEquals(false, $command->is_failed);
         $this->assertEquals(false, $command->is_undo_run);
+        $this->assertNull($command->getExecException());
     }
 
     public function test_exec_fail_run_return_false()
@@ -74,6 +75,7 @@ class CommandTest extends TestCase
         $this->assertEquals(false, $command->is_success);
         $this->assertEquals(true, $command->is_failed);
         $this->assertEquals(true, $command->is_undo_run);
+        $this->assertNull($command->getExecException());
     }
 
     public function test_exec_fail_by_exception()
@@ -92,5 +94,6 @@ class CommandTest extends TestCase
         $this->assertEquals(false, $command->is_success);
         $this->assertEquals(true, $command->is_failed);
         $this->assertEquals(true, $command->is_undo_run);
+        $this->assertTrue($command->getExecException() instanceof Exception);
     }
 }
