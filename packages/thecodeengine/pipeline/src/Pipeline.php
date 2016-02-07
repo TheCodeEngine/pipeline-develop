@@ -78,7 +78,7 @@ class Pipeline
 
     protected function runLoop()
     {
-        if ($this->run_loop_count > 1000) {
+        if ($this->run_loop_count > 200) {
             return $this->run_loop_count;
         }
 

@@ -46,7 +46,8 @@ class Command2PipelineFailedDBTest extends \TheCodeEngine\Pipeline\Command
         DB::table('users')->insert(
             ['email' => $faker->email, 'name' => $faker->name]
         );
-        return false;
+        throw new Exception('My Test Exception');
+        return true;
     }
 
     public function nextTaskSuccess()
