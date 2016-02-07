@@ -150,8 +150,6 @@ return [
 
         JeroenG\Packager\PackagerServiceProvider::class,
 
-        TheCodeEngine\Pipeline\PipelineServiceProvider::class,
-        
         /*
          * Application Service Providers...
          */
