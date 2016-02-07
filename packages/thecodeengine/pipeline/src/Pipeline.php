@@ -142,7 +142,7 @@ class Pipeline
 
         $rv ? $this->success() : $this->failed();
 
-        if (is_string($new_class)) {
+        if (!is_null($new_class)) {
             $this->loadCommand($new_class, $input_data);
         }
     }
