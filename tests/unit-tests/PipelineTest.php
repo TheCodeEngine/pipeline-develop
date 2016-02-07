@@ -58,7 +58,7 @@ class PipelineTest extends TestCase
         $command1->shouldReceive('exec')->once()->andReturn([false, null, null]);
         $command1->shouldReceive('undo_run')->once()->andReturn(true);
         $command1->shouldReceive('isRunned')->once()->andReturn(false);
-
+        $command1->shouldReceive('isUndoRun')->once()->andReturn(false);
 
         $pipeline = new Pipeline($job, $command1);
         $this->assertEquals(false, $pipeline->is_runned);
@@ -78,11 +78,13 @@ class PipelineTest extends TestCase
         $command2->shouldReceive('exec')->once()->andReturn([false, null, null]);
         $command2->shouldReceive('undo_run')->once()->andReturn(true);
         $command2->shouldReceive('isRunned')->once()->andReturn(false);
+        $command2->shouldReceive('isUndoRun')->once()->andReturn(false);
         // Mock Command1
         $command1 = Mockery::mock(\TheCodeEngine\Pipeline\Command::class);
         $command1->shouldReceive('exec')->once()->andReturn([true, $command2, null]);
         $command1->shouldReceive('undo_run')->once()->andReturn(true);
         $command1->shouldReceive('isRunned')->between(1, 3)->andReturnValues([false, true]);
+        $command1->shouldReceive('isUndoRun')->once()->andReturn(false);
 
         $pipeline = new Pipeline($job, $command1);
         $this->assertEquals(false, $pipeline->is_runned);

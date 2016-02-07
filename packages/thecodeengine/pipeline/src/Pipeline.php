@@ -4,6 +4,7 @@ namespace TheCodeEngine\Pipeline;
 use Exception;
 use Illuminate\Support\Collection;
 use DB;
+use TheCodeEngine\Pipeline\Exceptions\PipelineCycleException;
 
 /**
  * Class CommandPipeline
@@ -79,7 +80,8 @@ class Pipeline
     protected function runLoop()
     {
         if ($this->run_loop_count > 200) {
-            return $this->run_loop_count;
+            $this->failed();
+            throw new PipelineCycleException('Pipeline::runLoop() Cycle ? Can not run more then 200 Commands in a Pipeline');
         }
 
         $this->run_loop_count += 1;
@@ -123,7 +125,7 @@ class Pipeline
     protected function getNotUndoRunningCommandCollection()
     {
         return $this->commands->filter(function ($item){
-            $value = $item->isRunned();
+            $value = $item->isUndoRun();
             if ($value === false) {
                 return $item;
             }
@@ -135,7 +137,7 @@ class Pipeline
         $this->is_failed = true;
         // Undo all Commands in the pipeline
         /** @var Command $command */
-        foreach($this->commands as $command) {
+        foreach($this->getNotUndoRunningCommandCollection() as $command) {
             $command->undo_run();
         }
     }

@@ -52,7 +52,7 @@ class CommandTest extends TestCase
         $this->assertNull($new_class);
         $this->assertEquals([], $input_data);
         // Check Flags
-        $this->assertEquals(true, $command->is_runned);
+        $this->assertEquals(true, $command->isRunned());
         $this->assertEquals(true, $command->is_success);
         $this->assertEquals(false, $command->is_failed);
         $this->assertEquals(false, $command->is_undo_run);
@@ -71,7 +71,7 @@ class CommandTest extends TestCase
         $this->assertEquals('Test', $new_class);
         $this->assertEquals(['data' => "Test"], $input_data);
         // Check Flags
-        $this->assertEquals(true, $command->is_runned);
+        $this->assertEquals(true, $command->isRunned());
         $this->assertEquals(false, $command->is_success);
         $this->assertEquals(true, $command->is_failed);
         $this->assertEquals(true, $command->is_undo_run);
@@ -90,10 +90,10 @@ class CommandTest extends TestCase
         $this->assertNull($new_class);
         $this->assertEquals([], $input_data);
         // Check Flags
-        $this->assertEquals(true, $command->is_runned);
+        $this->assertEquals(true, $command->isRunned());
         $this->assertEquals(false, $command->is_success);
         $this->assertEquals(true, $command->is_failed);
-        $this->assertEquals(true, $command->is_undo_run);
+        $this->assertEquals(true, $command->isUndoRun());
         $this->assertTrue($command->getExecException() instanceof Exception);
     }
 }
