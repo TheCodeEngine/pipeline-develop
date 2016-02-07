@@ -116,13 +116,27 @@ class Pipeline
         });
     }
 
+    /**
+     * Return a Collection of all Commands that have not running the undo action
+     * @return static
+     */
+    protected function getNotUndoRunningCommandCollection()
+    {
+        return $this->commands->filter(function ($item){
+            $value = $item->isRunned();
+            if ($value === false) {
+                return $item;
+            }
+        });
+    }
+
     protected function failed()
     {
         $this->is_failed = true;
         // Undo all Commands in the pipeline
         /** @var Command $command */
         foreach($this->commands as $command) {
-            //$command->undo_run();
+            $command->undo_run();
         }
     }
 
@@ -140,7 +154,7 @@ class Pipeline
 
         list($rv, $new_class, $input_data) = $command->exec();
 
-        $rv ? $this->success() : $this->failed();
+        $rv === true ? $this->success() : $this->failed();
 
         if (!is_null($new_class)) {
             $this->loadCommand($new_class, $input_data);
