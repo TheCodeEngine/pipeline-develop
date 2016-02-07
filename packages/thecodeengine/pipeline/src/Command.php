@@ -18,7 +18,7 @@ use Exception;
  *
  * @package TheCodeEngine\Pipeline
  */
-abstract class Command
+class Command
 {
     /**
      * @var Pipeline
@@ -165,5 +165,13 @@ abstract class Command
         }
 
         return [$rv, $new_class, $input_data];
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isRunned()
+    {
+        return $this->is_runned;
     }
 }

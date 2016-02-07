@@ -91,8 +91,8 @@ class Pipeline
             return $this->run_loop_count;
         }
 
-        foreach($this->getNotRunnedCommandCollection() as $command) {
-                $this->runCommand($command);
+        foreach($commands as $command) {
+            $this->runCommand($command);
         }
 
         if ($this->is_failed === true) {
@@ -109,7 +109,8 @@ class Pipeline
     protected function getNotRunnedCommandCollection()
     {
         return $this->commands->filter(function ($item){
-            if ($item->is_runned === false) {
+            $value = $item->isRunned();
+            if ($value === false) {
                 return $item;
             }
         });
@@ -121,7 +122,7 @@ class Pipeline
         // Undo all Commands in the pipeline
         /** @var Command $command */
         foreach($this->commands as $command) {
-            $command->undo_run();
+            //$command->undo_run();
         }
     }
 
@@ -139,12 +140,7 @@ class Pipeline
 
         list($rv, $new_class, $input_data) = $command->exec();
 
-
-        if ($rv === true) {
-            $this->success();
-        } else {
-            $this->failed(); // @todo all Commands need undo action
-        }
+        $rv ? $this->success() : $this->failed();
 
         if (is_string($new_class)) {
             $this->loadCommand($new_class, $input_data);
