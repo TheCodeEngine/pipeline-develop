@@ -125,28 +125,25 @@ class Pipeline
         }
     }
 
+    protected function success()
+    {
+
+    }
+
     /**
      * Run the Command
      * @param Command $command
      */
     protected function runCommand($command)
     {
-        $new_class = null;
-        $input_data = [];
-        try {
-            $rv = $command->run();
-            if ($rv===false) {
-                $this->failed();
-                $command->failed();
-                list($new_class, $input_data) = $command->nextTaskfailed();
-            } else {
-                $command->success();
-                list($new_class, $input_data) = $command->nextTaskSuccess();
-            }
-        } catch (Exception $e) {
-            $this->failed();
-            $command->failed();
-            list($new_class, $input_data) = $command->nextTaskfailed();
+
+        list($rv, $new_class, $input_data) = $command->exec();
+
+
+        if ($rv === true) {
+            $this->success();
+        } else {
+            $this->failed(); // @todo all Commands need undo action
         }
 
         if (is_string($new_class)) {

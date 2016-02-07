@@ -150,6 +150,8 @@ return [
 
         JeroenG\Packager\PackagerServiceProvider::class,
 
+        TheCodeEngine\Pipeline\PipelineServiceProvider::class,
+        
         /*
          * Application Service Providers...
          */
@@ -158,7 +160,6 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
-        TheCodeEngine\Pipeline\PipelineServiceProvider::class,
 
     ],
 
