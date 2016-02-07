@@ -31,9 +31,21 @@ abstract class Command
      */
     protected $data;
 
+    /**
+     * @var bool is command running
+     */
     public $is_runned = false;
+    /**
+     * @var bool is command successful running
+     */
     public $is_success = false;
+    /**
+     * @var bool is command running with error
+     */
     public $is_failed = false;
+    /**
+     * @var bool is command has exec the undo action
+     */
     public $is_undo_run = false;
 
     /**
