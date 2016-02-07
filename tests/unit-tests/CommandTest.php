@@ -13,7 +13,6 @@ class CommandTest extends TestCase
     public function test_init()
     {
         $mock = Mockery::mock(\TheCodeEngine\Pipeline\Job::class);
-
         $command = new MyCommandTestCommand($mock);
     }
 }

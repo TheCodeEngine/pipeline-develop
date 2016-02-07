@@ -11,6 +11,9 @@ namespace TheCodeEngine\Pipeline;
  */
 /**
  * Class Command
+ *
+ * validate() --> run()
+ *
  * @package TheCodeEngine\Pipeline
  */
 abstract class Command
@@ -32,13 +35,16 @@ abstract class Command
 
     /**
      * Create A Command from Class string
-     * @param string $class_name
+     * @param string|object $class_name Object only for test purpose
      * @param Pipeline $pipeline
      * @param $input_data
-     * @return
+     * @return mixed
      */
     public static function createFromClassName($class_name, $pipeline, $input_data)
     {
+        if (is_object($class_name)) {
+            return $class_name;
+        }
         return new $class_name($pipeline, $input_data);
     }
 
@@ -55,7 +61,7 @@ abstract class Command
      * validate if the Command can run with the given Data
      * @return array [Boolean can_run, array of errormessages]
      */
-    public function validate()
+    public function is_valid()
     {
         return [true, []];
     }
@@ -67,6 +73,19 @@ abstract class Command
     public function run()
     {
         $this->is_runned = true;
+        $this->is_valid();
+        return true;
+    }
+
+    /**
+     * Run when the Command is failing
+     *
+     * Undo only things thats not done in the database the Pipline has make a transaction !
+     *
+     * @return bool
+     */
+    public function undo_run()
+    {
         return true;
     }
 

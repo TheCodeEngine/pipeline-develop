@@ -3,6 +3,7 @@
 namespace TheCodeEngine\Pipeline;
 use Exception;
 use Illuminate\Support\Collection;
+use DB;
 
 /**
  * Class CommandPipeline
@@ -15,7 +16,19 @@ class Pipeline
      */
     public $job;
 
+    /**
+     * @var int Count of running Commands
+     */
     protected $run_loop_count = 0;
+
+    /**
+     * @var bool is Pipeline runned
+     */
+    public $is_runned = false;
+    /**
+     * @var bool is command in pipeline failed
+     */
+    public $is_failed = false;
 
     /**
      * @var Collection
@@ -37,13 +50,12 @@ class Pipeline
 
     protected function loadCommand($command_class, $input_data=[])
     {
-        var_dump(count($this->commands));
         $this->commands->push(Command::createFromClassName($command_class, $this, $input_data));
-        var_dump(count($this->commands));
     }
 
     public function run()
     {
+        $this->is_runned = true;
         $this->beforeRunLoop();
         $this->runLoop();
         $this->afterRunLoop();
@@ -52,12 +64,16 @@ class Pipeline
 
     protected function beforeRunLoop()
     {
-
+        DB::beginTransaction();
     }
 
     protected function afterRunLoop()
     {
-
+        if ($this->is_failed) {
+            DB::rollBack();
+        } else {
+            DB::commit();
+        }
     }
 
     protected function runLoop()
@@ -65,6 +81,8 @@ class Pipeline
         if ($this->run_loop_count > 1000) {
             return $this->run_loop_count;
         }
+
+        $this->run_loop_count += 1;
 
         /** @var Collection $commands */
         $commands = $this->getNotRunnedCommandCollection();
@@ -77,7 +95,9 @@ class Pipeline
                 $this->runCommand($command);
         }
 
-        $this->run_loop_count += 1;
+        if ($this->is_failed === true) {
+            return $this->run_loop_count;
+        }
 
         return $this->runLoop();
     }
@@ -95,6 +115,11 @@ class Pipeline
         });
     }
 
+    protected function failed()
+    {
+        $this->is_failed = true;
+    }
+
     /**
      * Run the Command
      * @param Command $command
@@ -106,14 +131,18 @@ class Pipeline
         try {
             $rv = $command->run();
             if ($rv===false) {
+                $this->failed();
                 $command->failed();
+                $command->undo_run();
                 list($new_class, $input_data) = $command->nextTaskfailed();
             } else {
                 $command->success();
                 list($new_class, $input_data) = $command->nextTaskSuccess();
             }
         } catch (Exception $e) {
+            $this->failed();
             $command->failed();
+            $command->undo_run();
             list($new_class, $input_data) = $command->nextTaskfailed();
         }
 

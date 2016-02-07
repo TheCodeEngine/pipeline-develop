@@ -66,15 +66,20 @@ class MyExamplePipelineTestCommand3 extends \TheCodeEngine\Pipeline\Command
     }
 }
 
-class PipelineTest extends TestCase
+class PipelineSuccessTest extends TestCase
 {
     public function test_run_pipeline_success()
     {
+        echo "\nPipelineSuccessTest::test_run_pipeline_success\n";
         $mock = Mockery::mock(\TheCodeEngine\Pipeline\Job::class);
 
         $pipeline = new Pipeline($mock, 'MyExamplePipelineTestCommand1');
         $this->assertNotNull($pipeline);
+        $this->assertFalse($pipeline->is_failed);
+        $this->assertFalse($pipeline->is_runned);
         $commands = $pipeline->run();
+        $this->assertFalse($pipeline->is_failed);
+        $this->assertTrue($pipeline->is_runned);
         $this->assertCount(3, $commands);
     }
 }
